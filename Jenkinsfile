@@ -7,8 +7,10 @@ pipeline {
     }
 
     environment {
+        BUILD_VERSION = '6.0.1'
         ARTEFACT_NAME = "${WORKSPACE}/target/WebGoat-${BUILD_VERSION}.war"
         IQ_SCAN_URL = ""
+        BUILD_TAG = "webgoat-${BUILD_VERSION}"
     }
 
     stages {
@@ -16,7 +18,6 @@ pipeline {
             steps {
                 sh 'mvn -B -Dproject.version=$BUILD_VERSION -Dmaven.test.failure.ignore clean package'
             }
-
             post {
                 success {
                     echo 'Now archiving...'
@@ -37,19 +38,41 @@ pipeline {
                         iqInstanceId: 'nxiq',
                         iqScanPatterns: [[scanPattern: '**/*.war']],
                         iqStage: 'build',
-                        jobCredentialsId: 'sonatype'
-
-                        /*
                         reachability: [
                             javaAnalysis: [
                                 enable: true
                             ]
                         ]
-                        */
                     )
 
                     echo "Nexus IQ scan succeeded: ${policyEvaluation.applicationCompositionReportUrl}"
-                    env.IQ_SCAN_URL = "${policyEvaluation.applicationCompositionReportUrl}"
+                    env.IQ_SCAN_URL = policyEvaluation.applicationCompositionReportUrl
+                }
+            }
+        }
+
+        stage('Publish to Repo') {
+            steps {
+                script {
+                    nexusPublisher(
+                        nexusInstanceId: 'nxrm3',
+                        nexusRepositoryId: 'maven-releases',
+                        packages: [[
+                            $class: 'MavenPackage',
+                            mavenAssetList: [[
+                                classifier: '',
+                                extension: 'war',
+                                filePath: "${ARTEFACT_NAME}"
+                            ]],
+                            mavenCoordinate: [
+                                artifactId: 'WebGoat',
+                                groupId: 'org.demo',
+                                packaging: 'war',
+                                version: "${BUILD_VERSION}"
+                            ]
+                        ]],
+                        tagName: "${BUILD_TAG}"
+                    )
                 }
             }
         }
