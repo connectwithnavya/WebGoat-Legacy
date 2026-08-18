@@ -53,13 +53,5 @@ pipeline {
                 }
             }
         }
-
-        stage('Publish to Repo') {
-            steps {
-                script {
-                    // Publish logic goes here
-                }
-            }
-        }
     }
 }
