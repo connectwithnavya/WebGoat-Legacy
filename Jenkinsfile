@@ -37,16 +37,23 @@ pipeline {
                         iqInstanceId: 'nxiq',
                         iqScanPatterns: [[scanPattern: '**/*.war']],
                         iqStage: 'build',
-                        jobCredentialsId: 'sonatype',
-                        reachability: [
+                        jobCredentialsId: 'sonatype'
+                        /*reachability: [
                             javaAnalysis: [
                                 enable: true
                             ]
-                        ]
+                        ]*/
                     )
 
                     echo "Nexus IQ scan succeeded: ${policyEvaluation.applicationCompositionReportUrl}"
                     env.IQ_SCAN_URL = "${policyEvaluation.applicationCompositionReportUrl}"
+                }
+            }
+            stage("Publish to Repo"){
+                steps {
+                    script{
+
+                    }
                 }
             }
         }
