@@ -37,12 +37,12 @@ pipeline {
                         iqApplication: selectedApplication('webgoat'),
                         iqInstanceId: 'nxiq',
                         iqScanPatterns: [[scanPattern: '**/*.war']],
-                        iqStage: 'build',
-                        reachability: [
+                        iqStage: 'build'
+                        /*reachability: [
                             javaAnalysis: [
                                 enable: true
                             ]
-                        ]
+                        ]*/
                     )
 
                     echo "Nexus IQ scan succeeded: ${policyEvaluation.applicationCompositionReportUrl}"
