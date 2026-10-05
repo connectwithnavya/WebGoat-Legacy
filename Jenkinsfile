@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        BUILD_VERSION = '6.0.1'
+        BUILD_VERSION = '6.0.2'
         ARTEFACT_NAME = "${WORKSPACE}/target/WebGoat-${BUILD_VERSION}.war"
         IQ_SCAN_URL = ""
         BUILD_TAG = "webgoat-${BUILD_VERSION}"
